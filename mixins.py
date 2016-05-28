@@ -7,7 +7,7 @@ import pickle
 
 class BaseMixIn:
 	def process_request_func(self, request, client_address):
-		print("start_inner")
+		#print("start_inner")
 		try:
 			self.finish_request(request, client_address)
 			self.shutdown_request(request)
@@ -56,5 +56,5 @@ class ProcessPoolMixIn(BaseMixIn):
 		HTTPServer.__init__(self, state[0], state[1])
 	
 	def process_request(self, request, client_address):
-		print("start_processing")
+	#	print("start_processing")
 		self.pool.apply_async(process_request_func_queue, (self, request, client_address))
