@@ -9,9 +9,9 @@ mode = sys.argv[1]
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn, ForkingMixIn
 from MyHandler import handler
-from mixins import AsyncioMixIn, ThreadPoolMixIn, ProcessPoolMixIn
+from mixins import AsyncioMixIn, ThreadPoolMixIn, ProcessPoolMixIn, ProcessPoolServer
 
-dict = {"asyncio": AsyncioMixIn, "thread":ThreadingMixIn, "process":ForkingMixIn, "threadpool":ThreadPoolMixIn, "processpool":ProcessPoolMixIn}
+dict = {"asyncio": AsyncioMixIn, "thread":ThreadingMixIn, "process":ForkingMixIn, "threadpool":ThreadPoolMixIn, "processpool":ProcessPoolServer}
 
 class AsyncioServer(AsyncioMixIn, HTTPServer):
 	pass

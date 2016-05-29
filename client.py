@@ -3,16 +3,15 @@ import time
 import threading
 
 n = 2000
-n_thread = 8 
+n_thread = 5 
 _sum = 0
 def test_thread():
 	global _sum
 	httpClient = http.client.HTTPConnection('localhost', 8080)
-	for i in range(n):
-		for j in range(72):
-			httpClient.request('GET', '')
-			response = httpClient.getresponse()
-		_sum += 72
+	while True:
+		httpClient.request('GET', '')
+		response = httpClient.getresponse()
+		_sum += 1
 
 thread = [1] * 10
 for i in range(n_thread):

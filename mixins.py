@@ -3,7 +3,7 @@ import threading
 from multiprocessing.dummy import Pool as ThreadPool
 from multiprocessing import Pool as ProcessPool
 from multiprocessing import Queue, sharedctypes, Pipe
-import pickle
+from http.server import HTTPServer
 
 class BaseMixIn:
 	def process_request_func(self, request, client_address):
@@ -58,3 +58,22 @@ class ProcessPoolMixIn(BaseMixIn):
 	def process_request(self, request, client_address):
 	#	print("start_processing")
 		self.pool.apply_async(process_request_func_queue, (self, request, client_address))
+
+def init(HandlerClass):
+	global httpServer
+	httpServer = HTTPServer(('', 0), HandlerClass)
+
+def f(request, client_address):
+	global httpServer
+	try:
+		httpServer.finish_request(request, client_address)
+		httpServer.shutdown_request(request)
+	except Exception as e:
+		print(e)
+	
+class ProcessPoolServer(ProcessPoolMixIn, HTTPServer):
+	def __init__(self, address, HandlerClass):
+		self.pool = ProcessPool(10, init, (HandlerClass,))
+		HTTPServer.__init__(self, address, HandlerClass)
+	def process_request(self, request, client_address):
+		self.pool.apply_async(f, (request, client_address))
