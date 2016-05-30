@@ -9,24 +9,15 @@ mode = sys.argv[1]
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn, ForkingMixIn
 from MyHandler import handler
-from mixins import AsyncioMixIn, ThreadPoolMixIn, ProcessPoolMixIn, ProcessPoolServer
+from mixins import AsyncioMixIn, ThreadPoolMixIn, ProcessPoolMixIn
 
-dict = {"asyncio": AsyncioMixIn, "thread":ThreadingMixIn, "process":ForkingMixIn, "threadpool":ThreadPoolMixIn, "processpool":ProcessPoolServer}
-
-class AsyncioServer(AsyncioMixIn, HTTPServer):
-	pass
-#	def __init__(self, a, b, c=True):
-#		AsyncioMixIn.__init__(self)
-#		HTTPServer.__init__(self, a, b, c)
-
-class ThreadingServer(ThreadingMixIn, HTTPServer):
-	pass
-
-class ThreadPoolServer(ThreadPoolMixIn, HTTPServer):
-	pass
-
-class ProcessPoolServer(ProcessPoolMixIn, HTTPServer):
-	pass
+dict = {
+"asyncio": AsyncioMixIn,
+"thread":ThreadingMixIn,
+"process":ForkingMixIn,
+"threadpool":ThreadPoolMixIn,
+"processpool":ProcessPoolMixIn
+}
 
 class MyServer(dict.get(mode), HTTPServer):
 	pass

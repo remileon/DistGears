@@ -17,12 +17,7 @@ class BaseMixIn:
 
 	@asyncio.coroutine
 	def process_request_func_coroutine(self, request, client_address):
-		try:
-			self.finish_request(request, client_address)
-			self.shutdown_request(request)
-		except:
-			self.handle_error(request, client_address)
-			self.shutdown_request(request)
+		self.process_request_func(request, client_address)
 
 class AsyncioMixIn(BaseMixIn):
 	loop = asyncio.get_event_loop()
@@ -36,34 +31,11 @@ class ThreadPoolMixIn(BaseMixIn):
 	def process_request(self, request, client_address):
 		self.pool.apply_async(self.process_request_func, (request, client_address))
 
-def process_request_func_queue(self, request, client_address):
-	print("start inner")
-	print("get self")
-	try:
-		self.finish_request(request, client_address)
-		self.shutdown_request(request)
-	except Exception as e:
-		print(e)
-	print("finish")
-
-class ProcessPoolMixIn(BaseMixIn):
-	pool = ProcessPool(10)
-	
-	def __getstate__(self):
-		return (self.server_address, self.RequestHandlerClass)
-
-	def __setstate__(self, state):
-		HTTPServer.__init__(self, state[0], state[1])
-	
-	def process_request(self, request, client_address):
-	#	print("start_processing")
-		self.pool.apply_async(process_request_func_queue, (self, request, client_address))
-
 def init(HandlerClass):
 	global httpServer
 	httpServer = HTTPServer(('', 0), HandlerClass)
 
-def f(request, client_address):
+def do_request(request, client_address):
 	global httpServer
 	try:
 		httpServer.finish_request(request, client_address)
@@ -71,9 +43,10 @@ def f(request, client_address):
 	except Exception as e:
 		print(e)
 	
-class ProcessPoolServer(ProcessPoolMixIn, HTTPServer):
+class ProcessPoolMixIn(BaseMixIn):
 	def __init__(self, address, HandlerClass):
 		self.pool = ProcessPool(10, init, (HandlerClass,))
 		HTTPServer.__init__(self, address, HandlerClass)
+
 	def process_request(self, request, client_address):
-		self.pool.apply_async(f, (request, client_address))
+		self.pool.apply_async(do_request, (request, client_address))
