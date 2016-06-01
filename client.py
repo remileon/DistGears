@@ -1,8 +1,12 @@
+import sys
 import http.client
 import time
 import threading
 
-n = 2000
+serveraddr = 'localhose'
+if len(sys.argv) >= 2:
+	serveraddr = sys.argv[1]
+
 n_thread = 5 
 _sum = 0
 def test_thread():
