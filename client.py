@@ -3,12 +3,18 @@ import http.client
 import time
 import threading
 
-serveraddr = 'localhose'
+serveraddr = 'localhost'
 if len(sys.argv) >= 2:
 	serveraddr = sys.argv[1]
 
+# numbers of test threeads at the same time
 n_thread = 5 
+# counter for total request numbers dealed
 _sum = 0
+
+# inner function of one thread
+# loop:
+# 	send require, receive respond
 def test_thread():
 	global _sum
 	httpClient = http.client.HTTPConnection('localhost', 8080)
@@ -17,16 +23,15 @@ def test_thread():
 		response = httpClient.getresponse()
 		_sum += 1
 
-thread = [1] * 10
+# construct threads
+thread = [1] * n_thread
 for i in range(n_thread):
 	thread[i] = threading.Thread(target = test_thread, args = ())
 
-#before = time.time()
+# start threads
 for i in range(n_thread):
 	thread[i].start()
-#for i in range(n_thread):
-#	thread[i].join()
-#after = time.time()
 
+# wait for some time and get the counter
 time.sleep(5)
 print(_sum / 5)

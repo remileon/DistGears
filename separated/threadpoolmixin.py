@@ -11,6 +11,6 @@ class ThreadPoolMixIn():
 		except:
 			self.handle_error(request, client_address)
 			self.shutdown_request(request)
-
+	# function that overriders process_request in socketserver
 	def process_request(self, request, client_address):
 		self.pool.apply_async(self.process_request_func, (request, client_address))

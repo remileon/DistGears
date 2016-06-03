@@ -1,10 +1,13 @@
 from multiprocessing import Pool as ProcessPool
 from http.server import HTTPServer
 
+# function that each process call at first
+# construct an httpServer
 def init(HandlerClass):
 	global httpServer
 	httpServer = HTTPServer(('', 0), HandlerClass)
 
+# function that let a process call to deal with the request
 def do_request(request, client_address):
 	global httpServer
 	try:
