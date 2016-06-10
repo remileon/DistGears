@@ -15,15 +15,31 @@ class BaseMixIn:
 			self.handle_error(request, client_address)
 			self.shutdown_request(request)
 
-	@asyncio.coroutine
-	def process_request_func_coroutine(self, request, client_address):
-		self.process_request_func(request, client_address)
+global_queue = asyncio.Queue()
 
 class AsyncioMixIn(BaseMixIn):
 	loop = asyncio.get_event_loop()
 	
+	def __init__(self, a, b):
+		self.loop.create_task(self.process_request_func_coroutine())
+		#threading.Thread(target = self.loop.run_forever, args = ()).start()
+		#self.loop.run_forever()
+		HTTPServer.__init__(self, a, b)
+
+	@asyncio.coroutine
+	def process_request_func_coroutine(self):
+		print("asd")
+		while True:
+			print("dsa")
+			(request, client_address) = yield from global_queue.get()
+			self.process_request_func(request, client_address)
+
 	def process_request(self, request, client_address):
-		self.loop.run_until_complete(self.process_request_func_coroutine(request, client_address))
+		print("qqq")
+		print(self.loop.is_running())
+		global_queue.put_nowait((request, client_address))
+		if not self.loop.is_running():
+			threading.Thread(target = self.loop.run_forever, args = ()).start()
 
 class ThreadPoolMixIn(BaseMixIn):
 	pool = ThreadPool(10)

@@ -17,7 +17,7 @@ _sum = 0
 # 	send require, receive respond
 def test_thread():
 	global _sum
-	httpClient = http.client.HTTPConnection('localhost', 8080)
+	httpClient = http.client.HTTPConnection(serveraddr, 8080)
 	while True:
 		httpClient.request('GET', '')
 		response = httpClient.getresponse()
